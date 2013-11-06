@@ -6,10 +6,10 @@ using System.Resources;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("FM.Barcode")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("FM Barcode scanner")]
+[assembly: AssemblyDescription("Ready to use Windows Phone 8 barcode and QR code reader")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("MUISEROUX Fritzgerald")]
 [assembly: AssemblyProduct("FM.Barcode")]
 [assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
