@@ -14,6 +14,8 @@ using ZXing;
 
 namespace FM.Barcode
 {
+    [TemplateVisualState(Name=ResultFoundIndicatorState, GroupName=ResultIndicatorStates)]
+    [TemplateVisualState(Name = ResultNotFoundIndicatorState, GroupName = ResultIndicatorStates)]
     [TemplatePart(Name=_videoPreviewBrushName, Type=typeof(VideoBrush))]
     public class ScannerControl : Control
     {
@@ -57,6 +59,22 @@ namespace FM.Barcode
 
         #endregion
 
+        #region SuccessGlyphFill
+
+        public Brush SuccessGlyphFill
+        {
+            get { return (Brush)GetValue(SuccessGlyphFillProperty); }
+            set { SetValue(SuccessGlyphFillProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for SuccessGlyphFill.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SuccessGlyphFillProperty =
+            DependencyProperty.Register("SuccessGlyphFill", typeof(Brush), typeof(ScannerControl), new PropertyMetadata(new SolidColorBrush(Colors.Green)));
+
+        
+
+        #endregion
+
         #region PhotoCamera
 
         PhotoCamera _currentCamera;
@@ -92,6 +110,15 @@ namespace FM.Barcode
             _timer.Interval = _ScanInterval;
             _timer.Tick += (timer, args) => CaptureFrame();
         }
+
+        #endregion
+
+        #region Visual states
+
+        private const string ResultIndicatorStates = "ResultIndicatorStates";
+
+        private const string ResultNotFoundIndicatorState = "ResultNotFound";
+        private const string ResultFoundIndicatorState = "ResultFound";
 
         #endregion
 
@@ -259,7 +286,6 @@ namespace FM.Barcode
 
         void ScannerControl_ReloadCamera(object sender, EventArgs e)
         {
-            bool wasRunning = false;
             if (_timer != null && _timer.IsEnabled)
                 _timer.Stop();
             DisposeCamera();
@@ -325,6 +351,9 @@ namespace FM.Barcode
             Result rsl = AnalyseFrame();
             if (rsl != null)
             {
+                //go to the visual state
+                VisualStateManager.GoToState(this, ResultFoundIndicatorState, false);
+
                 //if result is not null then ZXing found a match
                 if(ScanResultFound != null)
                 {
@@ -332,6 +361,11 @@ namespace FM.Barcode
                     ScannerResultEventArgs args = new ScannerResultEventArgs(rsl);
                     ScanResultFound(this, args);
                 }
+            }
+            else
+            {
+                //go to the visual state
+                VisualStateManager.GoToState(this, ResultNotFoundIndicatorState, false);
             }
         }
 
