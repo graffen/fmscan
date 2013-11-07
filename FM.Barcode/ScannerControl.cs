@@ -122,20 +122,41 @@ namespace FM.Barcode
 
         #endregion
 
-        public event EventHandler<ScannerResultEventArgs> ScanResultFound;
-        private static event EventHandler ReloadCamera;
+        #region IBarcodeReader
 
-        VideoBrush _videoPreviewBrush;
-        CameraType _cameraType = CameraType.Primary;
         IBarcodeReader _barcodeReader;
-        DispatcherTimer _timer;
+        public IBarcodeReader BarcodeReader
+        {
+            get { return _barcodeReader; }
+        }
 
+        #endregion
+
+        #region Public Custom Events
+
+        public event EventHandler<ScannerResultEventArgs> ScanResultFound;
+
+        #endregion
+
+        #region Private Events
+
+        private static event EventHandler ReloadCamera; 
+
+        #endregion
+
+        #region Required elements Names
+
+        private const String _videoPreviewBrushName = "previewVideoBrush";
+
+        #endregion
+
+        private VideoBrush _videoPreviewBrush;
+        private CameraType _cameraType = CameraType.Primary;
+        private DispatcherTimer _timer; 
         /// <summary>
         /// Stores a reference to the current root visual.
         /// </summary>
         private PhoneApplicationFrame _rootVisual;
-
-        private const String _videoPreviewBrushName = "previewVideoBrush";
         
         public ScannerControl()
         {
@@ -159,18 +180,24 @@ namespace FM.Barcode
         {
             if(_currentCamera != null)
             {
-                if(_currentCamera.IsFocusAtPointSupported)
+                try
                 {
-                    var pt = e.GetPosition(this);
-                    double x = pt.X / this.ActualWidth;
-                    double y = pt.Y / this.ActualHeight;
-                    _currentCamera.FocusAtPoint(x, y);
+                    if (_currentCamera.IsFocusAtPointSupported)
+                    {
+                        var pt = e.GetPosition(this);
+                        double x = pt.X / this.ActualWidth;
+                        double y = pt.Y / this.ActualHeight;
+                        _currentCamera.FocusAtPoint(x, y);
+                    }
+                    else if (_currentCamera.IsFocusSupported)
+                    {
+                        _currentCamera.Focus();
+                    }
                 }
-                else if (_currentCamera.IsFocusSupported)
+                catch (Exception)
                 {
-                    _currentCamera.Focus();
+                    //for many reason focus may fail son we catch the error quietly
                 }
-
             }
         }
 
@@ -310,7 +337,7 @@ namespace FM.Barcode
                 {
                     //Start the timer that should always be initialiazed before the camera
                     //once the camera ready we start the timer
-                    _timer.Start();
+                    ResumeScan();
                 });
             
         }
@@ -380,6 +407,24 @@ namespace FM.Barcode
 
             Result result = _barcodeReader.Decode(previewBuffer, width, height, RGBLuminanceSource.BitmapFormat.Gray8);
             return result;
+        }
+
+        /// <summary>
+        /// Stop barcode Scanning
+        /// </summary>
+        public void StopScan()
+        {
+            if (_timer != null)
+                _timer.Stop();
+        }
+
+        /// <summary>
+        /// Resume Barcode scanning
+        /// </summary>
+        public void ResumeScan()
+        {
+            if (_timer != null && !_timer.IsEnabled)
+                _timer.Start();
         }
 
         public static void ReloadComponents()
