@@ -13,7 +13,7 @@ Then include the following namespace in your XAML file.
 Once done you can use the scanner control in your page
 `<fm:ScannerControl x:Name="ScanControl" />`  
   
-In order to support app switching please insert the following code in your method *Application_Activated* located in your App.xaml.cs
+In order to support app switching please insert the following code in the method *Application_Activated* located in your App.xaml.cs
 
     private void Application_Activated(object sender, ActivatedEventArgs e)
     {  
