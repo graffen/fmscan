@@ -399,6 +399,9 @@ namespace FM.Barcode
         private Result AnalyseFrame()
         {
 
+            if (_currentCamera == null)
+                return null;
+
             var width = Convert.ToInt32(_currentCamera.PreviewResolution.Width);
             var height = Convert.ToInt32(_currentCamera.PreviewResolution.Height);
             var previewBuffer = new byte[width * height];
