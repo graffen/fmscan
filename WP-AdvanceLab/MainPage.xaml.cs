@@ -20,6 +20,7 @@ namespace WP_AdvanceLab
             // Sample code to localize the ApplicationBar
             //BuildLocalizedApplicationBar();
             ScanControl.ScanResultFound += ScanControl_ScanResultFound;
+            ScanControl.AutoFocus();
         }
 
         void ScanControl_ScanResultFound(object sender, FM.Barcode.ScannerResultEventArgs e)

@@ -201,6 +201,18 @@ namespace FM.Barcode
             }
         }
 
+        public void AutoFocus()
+        {
+            try
+            {
+                _currentCamera.Focus();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
         private void OnLayoutUpdated(object sender, EventArgs e)
         {
             if (null != Application.Current.RootVisual)
@@ -388,9 +400,14 @@ namespace FM.Barcode
                     ScannerResultEventArgs args = new ScannerResultEventArgs(rsl);
                     ScanResultFound(this, args);
                 }
+                else
+                {
+                    AutoFocus();
+                }
             }
             else
             {
+                AutoFocus();
                 //go to the visual state
                 VisualStateManager.GoToState(this, ResultNotFoundIndicatorState, false);
             }
